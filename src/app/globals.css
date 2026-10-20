@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+    --canvas: #ffffff;
+    --surface: #f5f5f7;
+    --surface-strong: #e8e8ed;
+    --ink: #1d1d1f;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --aqua: #ddf0f2;
+    --aqua-strong: #b7e0e5;
+    --gold: #c9a24a;
+    --gold-light: #ecd189;
+    --night: #0b0b0c;
+    --success: #1f7a4d;
+    --warning: #b26b00;
+    --danger: #c0352b;
+}
+
+@theme inline {
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-surface-strong: var(--surface-strong);
+    --color-ink: var(--ink);
+    --color-ink-muted: var(--ink-muted);
+    --color-line: var(--line);
+    --color-line-soft: var(--line-soft);
+    --color-aqua: var(--aqua);
+    --color-aqua-strong: var(--aqua-strong);
+    --color-gold: var(--gold);
+    --color-gold-light: var(--gold-light);
+    --color-night: var(--night);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+
+    /* Apple's web stack. SF Pro can't be self-hosted, so Apple devices get it via -apple-system. */
+    --font-sans:
+        "SF Pro Display", "SF Pro Icons", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+        Helvetica, Arial, sans-serif;
+    --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+
+    /* Widest page content: 1920px. */
+    --container-page: 120rem;
+
+    /* Search and filter bars: 12px button corners + 10px padding, so the corners run parallel. */
+    --radius-bar: 1.375rem;
+}
+
+/* Type scale taken from apple.com. Register new sizes in `cn()` (src/lib/utils.ts) too. */
+@theme {
+    --text-hero: 5rem;
+    --text-hero--line-height: 1.05;
+    --text-hero--letter-spacing: -0.015em;
+    --text-hero--font-weight: 600;
+    --text-hero-md: 4rem;
+    --text-hero-md--line-height: 1.0625;
+    --text-hero-md--letter-spacing: -0.009em;
+    --text-hero-md--font-weight: 600;
+    --text-headline: 3rem;
+    --text-headline--line-height: 1.08349;
+    --text-headline--letter-spacing: -0.003em;
+    --text-headline--font-weight: 600;
+    --text-headline-md: 2.5rem;
+    --text-headline-md--line-height: 1.1;
+    --text-headline-md--letter-spacing: 0em;
+    --text-headline-md--font-weight: 600;
+    --text-headline-sm: 2rem;
+    --text-headline-sm--line-height: 1.125;
+    --text-headline-sm--letter-spacing: 0.004em;
+    --text-headline-sm--font-weight: 600;
+    --text-title: 1.75rem;
+    --text-title--line-height: 1.14286;
+    --text-title--letter-spacing: 0.007em;
+    --text-title--font-weight: 600;
+    --text-subtitle: 1.3125rem;
+    --text-subtitle--line-height: 1.19048;
+    --text-subtitle--letter-spacing: 0.011em;
+    --text-subtitle--font-weight: 600;
+    --text-intro: 1.3125rem;
+    --text-intro--line-height: 1.38105;
+    --text-intro--letter-spacing: 0.011em;
+    --text-body: 1.0625rem;
+    --text-body--line-height: 1.47059;
+    --text-body--letter-spacing: -0.022em;
+    --text-caption: 0.875rem;
+    --text-caption--line-height: 1.42859;
+    --text-caption--letter-spacing: -0.016em;
+    --text-micro: 0.75rem;
+    --text-micro--line-height: 1.33337;
+    --text-micro--letter-spacing: -0.01em;
+}
+
+@layer base {
+    body {
+        background: var(--canvas);
+        color: var(--ink);
+        font-size: var(--text-body);
+        line-height: var(--text-body--line-height);
+        letter-spacing: var(--text-body--letter-spacing);
+    }
+
+    ::selection {
+        background: var(--aqua-strong);
+    }
+
+    /* Chrome paints autofilled fields light blue; keep them white like every other field. */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--ink);
+        -webkit-box-shadow: 0 0 0 1000px var(--canvas) inset;
+        caret-color: var(--ink);
+    }
+}

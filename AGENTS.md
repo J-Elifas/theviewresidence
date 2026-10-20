@@ -7,3 +7,170 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Repository Guidelines
+
+## Scope
+
+- This file is repo-wide guidance for every agent session: how code is structured, named, styled, tested and verified.
+- `SPEC.md` is the source of truth for the product: goals, pages, routes, visual direction, typography, palette, components, data plan and acceptance criteria. Validate product-facing changes against it and update it when routes or requirements change.
+- `README.md` holds setup steps for humans. Update it when commands or environment variables change.
+
+## Product Direction
+
+- The View Residence Manado: a four-page marketing and listings site (Home, Lists, About, Contact) with an apple.com look and feel. See `SPEC.md`.
+- Listings and enquiries go through `src/server/`. Today listings come from seed data and enquiries are only logged; Firestore and Firebase App Hosting come next. Keep pages and components independent of the data source.
+- Don't add pages, routes, auth, an admin area or new services unless `SPEC.md` is updated first.
+
+## Before Writing Code
+
+1. Read `package.json` and `SPEC.md`.
+2. Read the guide in `node_modules/next/dist/docs/` for any Next.js API you touch. This project runs Next.js 16 with Cache Components and Partial Prefetching. Examples of differences from older versions: `error.tsx` receives `retry()`, `next/image` uses `loading="eager"` / `fetchPriority` instead of `priority`, and `params` / `searchParams` are Promises.
+3. Find an existing file of the same kind (page, controller, component, hook, server module, test) and match its structure, naming and style.
+4. Build only what the task needs.
+
+## Project Structure
+
+Next.js App Router, React 19, TypeScript (`strict`), Tailwind CSS v4 through PostCSS (`postcss.config.mjs`). Path alias `@/*` maps to `./src/*`; import across folders with `@/` and use `./` only inside the same folder.
+
+- `src/app/`: routes, layouts, loading and error UI, route controllers (`<Purpose>Controller.tsx`) and Route Handlers.
+- `src/components/`: presentational components grouped by purpose: `ui/` (primitives), `layout/` (Header, Footer, mobile navigation), `svg/` (logo and icons), and feature folders (`properties/`, `home/`, `about/`, `contact/`, `team/`).
+- `src/hooks/`: client hooks. Shared hooks at the top level, feature hooks in `src/hooks/<feature>/`.
+- `src/lib/`: framework-light helpers (`utils.ts`, `field-error-scroll.ts`).
+- `src/content/`: typed static copy and placeholder media.
+- `src/server/`: server-only code and client-safe contracts, one folder per feature, plus `api/` for shared Route Handler plumbing and `db/` once a database client exists.
+- `public/`: static files served from `/` (`favicon.svg`).
+- `tests/unit/` (Vitest, mirrors `src/`) and `tests/e2e/` (Playwright, one spec per user flow).
+- Root config: `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `postcss.config.mjs`, `.prettierrc`, `vitest.config.mts`, `playwright.config.ts`.
+
+Create a folder when its first file needs it, not in advance.
+
+## Layer Rules
+
+- **Pages and layouts** stay Server Components. They load data from `src/server/<feature>/queries.ts` and pass serializable props down. Never call your own Route Handlers from Server Components.
+- **Controllers** (`"use client"`, beside their route) own state, effects, handlers, forms, validation wiring, `fetch` calls, router actions and status alerts. They render components and pass data and callbacks as props.
+- **`src/components/`** is presentational only: props in, markup out. UI-only state and effects are fine (menu or listbox open state, animation presence, focus management, swipe gestures). No data fetching, routing decisions, form submission or validation rules.
+- **Hooks** never import queries, mutations or database modules. Keep pure work (filtering, sorting, parsing) in exported functions above the hook so it can be unit tested.
+- **`src/lib/`**: no React components, no hooks, no server-only imports, no side effects at import time.
+- **`src/server/<feature>/`**: `queries.ts` (reads) and `mutations.ts` (writes) start with `import "server-only";`. `types.ts`, `options.ts` and `schemas.ts` are the feature's client-safe contract and never import the database, environment variables or `server-only`.
+- A Server Component may render a client component only with serializable props. When a shared component can render on the server, pass event handlers only when they exist (see `PropertyFilterBar`).
+
+| File                                        | May import                                                                          | Must not import                                |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `app/**/page.tsx`, `layout.tsx`, `route.ts` | `server/*`, `components/*`, `lib/*`, `content/*`                                    | hooks                                          |
+| `app/**/*Controller.tsx`                    | `components/*`, `hooks/*`, `lib/*`, `server/<feature>/types`, `options`, `schemas`  | `server/*/queries`, `mutations`, `db/*`        |
+| `components/*`                              | `components/*`, `lib/*`, `content/*`, UI hooks, `server/<feature>/types`, `options` | feature hooks, `server/*/queries`, `mutations` |
+| `hooks/*`                                   | `hooks/*`, `lib/*`, `server/<feature>/types`, `options`, `schemas`                  | `server/*/queries`, `mutations`, `db/*`        |
+| `lib/*`                                     | `lib/*`                                                                             | `app/*`, `components/*`, `hooks/*`, `server/*` |
+| `server/*`                                  | `server/*`, `lib/*`                                                                 | `app/*`, `components/*`, `hooks/*`             |
+
+## Data, Caching And APIs
+
+- Cache Components is on. Wrap data reads in `"use cache"` with an explicit `cacheLife()` and a `cacheTag()` (listings use `cacheTag("properties")`); after a write that changes them, call `revalidateTag()` or `updateTag()`.
+- Don't call `Date.now()`, `new Date()`, `Math.random()` or `crypto.randomUUID()` while rendering, except inside `"use cache"` (see `CurrentYear` in `Footer.tsx`) or after `connection()` inside `<Suspense>`.
+- Client components that call `useSearchParams()` render inside `<Suspense>`. On `/lists` the fallback is the full server-rendered grid so listings stay in the HTML.
+- Filter and modal state on `/lists` lives in the URL. Use the names in `listingSearchParams` and update them with `window.history.replaceState`, which keeps `useSearchParams` in sync without a server round trip.
+- Queries return plain serializable objects shaped for the UI. Pair display and raw values: `price` and `priceValue`. Format on the server.
+- Route Handlers use `handleJsonRequest()` from `src/server/api/json-request-handler.ts`: read JSON, parse with the feature's zod schema (`parse<Action><Thing>Input`), call one mutation, respond 201 / 400 / 500 with generic messages.
+- Mutations return `{ ok, message }` and catch their own errors.
+- Database clients live in `src/server/db/` (planned: `firestore.ts`), created once, cached on `globalThis` in development, and throw a clear error when a credential is missing.
+
+## Coding Standards
+
+- Simple, readable code. No abstractions, wrappers or constants for one-off values. Early returns over nested conditionals.
+- TypeScript everywhere. No `any`; narrow `unknown`. `interface` for props and object shapes, `type` for unions. Derive types from option lists (`(typeof propertyTypes)[number]`). Use `import type` for type-only imports.
+- React 19: pass `ref` as a prop; don't add `forwardRef`.
+- Handle errors at boundaries with `try` / `catch` and show a generic message. Never swallow an error silently.
+- Use platform APIs (`Intl.NumberFormat`, `URL`, `URLSearchParams`) and create formatters once at module level.
+- Comments explain why, not what. Delete dead code.
+
+## Naming Conventions
+
+| Item                      | Convention                                                       | Example                                                                   |
+| ------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Component file and export | PascalCase; file name equals the default export                  | `PropertyCard.tsx` exports `PropertyCard`                                 |
+| Feature modal             | `<Purpose>Modal.tsx` wrapping `ui/Modal`                         | `PropertyDetailsModal.tsx`                                                |
+| Route controller          | `<Purpose>Controller.tsx` beside its route                       | `ListingsPageController.tsx`, `SiteNavigationController.tsx`              |
+| Page and layout functions | `<Name>Page`, `<Name>Layout`                                     | `ListsPage`, `RootLayout`                                                 |
+| URL segment folders       | kebab-case                                                       | `lists/`, `api/enquiries/`                                                |
+| Hook file and export      | `use<Purpose>`, `.ts` unless it renders JSX                      | `useStatusAlert.ts`, `hooks/properties/usePropertyListings.ts`            |
+| Server feature modules    | Fixed names                                                      | `queries.ts`, `mutations.ts`, `types.ts`, `options.ts`, `schemas.ts`      |
+| Other non-component files | kebab-case file, camelCase exports                               | `lib/field-error-scroll.ts`, `ui/field-styles.ts`                         |
+| Types                     | PascalCase with a role suffix, no `I`/`T` prefix                 | `PropertyRow`, `EnquiryFormValues`, `SelectFieldProps`                    |
+| Constants                 | camelCase, `as const` for fixed lists                            | `propertyTypes`, `listingSearchParams`                                    |
+| Booleans                  | `is`, `has`, `can`, `should`, `show`                             | `isFeatured`, `hasActiveFilters`                                          |
+| Event props and handlers  | prop `on<Event>`, implementation `handle<Event>`                 | `onOpenDetails={handleOpenDetails}`                                       |
+| Queries / mutations       | `get`, `list`, `find` + noun / verb + noun                       | `listProperties`, `getHomePageData`, `createEnquiry`                      |
+| Theme tokens              | kebab-case CSS variable mapped in `@theme`                       | `--color-ink-muted` becomes `text-ink-muted`                              |
+| HTML `id`                 | kebab-case, unique on the page                                   | `enquiry-email`, `enquiry-email-error`                                    |
+| Tests                     | `<SourceFile>.test.ts(x)` mirroring `src/`; e2e `<flow>.spec.ts` | `tests/unit/components/ui/Modal.test.tsx`, `tests/e2e/navigation.spec.ts` |
+
+- Default exports for components, hooks and Next.js route files; named exports for everything else.
+- No barrel files. Import from the file that defines the thing.
+
+## Components And Styling
+
+- Server Components by default. Add `"use client"` only where state, effects, refs or browser APIs are needed, and push it as low as possible.
+- Declare `<Component>Props` above the component, destructure props with defaults in the signature, and merge an optional `className` last with `cn()`.
+- Map variants and sizes with typed records (`Record<ButtonVariant, string>`). Render conditionally with `condition ? <Thing /> : null`.
+- Reuse `components/ui/` before creating anything new:
+    - Buttons: `Button` and `ButtonLink` share `button-styles.ts` (variants `primary`, `secondary`, `ghost`; sizes `xs` to `lg` plus `icon-*`; `leftIcon` / `rightIcon`). Buttons use 12px corners (`rounded-xl`); keep `rounded-full` for badges, icon circles and social links only. A link or span styled as a button (the card "Details", "Get directions") follows the same corners. Bars that hold buttons or selects (hero search, Lists filters) use `rounded-bar`; register any new radius token in `cn()` like the type scale.
+    - Fields: `FieldLabel`, `InputField` (and `TextInputField`, `EmailInputField`, `PhoneInputField`), `TextareaField` and `SelectField` share `field-styles.ts`. Never use a native `<select>`; use `SelectField` (`variant="bare"` inside search and filter bars). Focus shows as a dark border only: don't add glow rings (`ring-*`) to fields.
+    - Overlays and feedback: `Modal`, `StatusAlert` with `useStatusAlert`.
+- Use theme tokens (`bg-surface`, `text-ink-muted`, `bg-aqua`), never raw hex in class names.
+- Typography uses the Apple scale tokens from `globals.css` (`text-hero`, `text-headline`, `text-title`, `text-subtitle`, `text-intro`, `text-body`, `text-caption`, `text-micro`), not Tailwind's default `text-sm` / `text-lg`. A new size token must also be added to `extendTailwindMerge` in `src/lib/utils.ts`, or `cn()` will drop it next to a color class.
+- Wrap page content in `Container` (max 1920px). The home hero keeps its content at `max-w-7xl` so it stays centred on wide screens.
+- Write complete, static class strings. Never build class names at runtime.
+- Mobile first. Check every layout at 375px, 768px, 1280px and 1920px with no horizontal scroll.
+- **Every CSS transition uses `transition-all`** with a duration and easing (`transition-all duration-200 ease-out`) plus `motion-reduce:transition-none`. Animate opacity, translate, scale, color and shadow, not width, height or position. Photos zoom with `group-hover:scale-[1.04]` over 500ms.
+- Fixed overlays (drawers, modals, toasts) render outside the sticky header or in a portal: an ancestor with `backdrop-filter` turns `position: fixed` into positioning relative to that ancestor.
+- `scroll-padding-top` on `<html>` must equal the sticky header height (`scroll-pt-16 md:scroll-pt-20` for a 64px / 80px header). If it is larger, Next.js treats the top of the new page as off-screen after navigation and scrolls partway down it. Give scroll targets extra room with `scroll-mt-*` instead (see `FieldLabel`), and update both values together if the header height changes.
+- Images use `next/image` with `fill` + accurate `sizes` and meaningful `alt`. Only the hero image is eager (`loading="eager"`, `fetchPriority="high"`).
+- Icons come from lucide-react or `components/svg/`. Decorative icons get `aria-hidden="true"`; icon-only buttons get an `aria-label`.
+
+## Forms
+
+- The controller owns the form with react-hook-form: `useForm` with `zodResolver(schema)`, default values and submit handlers. The form component renders `Controller` fields and receives `control`, `errors`, `isSubmitting` and `onSubmit`.
+- Keep schemas in `src/server/<feature>/schemas.ts`: a form schema (all strings, empty optional fields allowed) and an API schema shared with the Route Handler.
+- On an invalid submit, call `scrollToFirstFieldError()` with the field order and ids. While submitting, disable fields and the button. Report the result with `StatusAlert` and reset the form on success.
+- Every field has a visible label, a unique kebab-case `id`, a `name`, the right `type`, `autoComplete` and `inputMode`. Errors are short and actionable; request errors stay generic.
+
+## UI/UX Standards
+
+- Match the existing visual language in `SPEC.md` before introducing new patterns.
+- Semantic HTML: one `<h1>` per page; `header`, `nav`, `main` and `footer` landmarks; `<button>` for actions; `<Link>` for navigation.
+- Keyboard: every control is reachable, focus is always visible, overlays trap focus, close on Escape and return focus to their trigger. Never use a positive `tabIndex`.
+- Handle loading, empty, error, disabled, hover, focus and active states.
+- Keep copy concise and in sentence case.
+
+## Commands
+
+| Script                    | Runs                                        |
+| ------------------------- | ------------------------------------------- |
+| `dev`                     | `next dev`                                  |
+| `build` / `start`         | `next build` / `next start`                 |
+| `lint`                    | `eslint`                                    |
+| `format` / `format:check` | `prettier --write .` / `prettier --check .` |
+| `test` / `test:run`       | `vitest` / `vitest run`                     |
+| `e2e`                     | `npm run build && playwright test`          |
+
+Type-check with `npx tsc --noEmit`. Use npm (the repo has `package-lock.json`). Playwright runs the production build on port 3100, so it doesn't clash with `next dev` on 3000. `allowedDevOrigins` in `next.config.ts` lets phones on the local network (`192.168.x.x`) use the dev server.
+
+## Verification Workflow
+
+- After any change, run `npm run lint`, `npx tsc --noEmit`, `npm run test:run` and `npm run format:check`.
+- Run `npm run build` when routes, config, metadata or server/client boundaries change, and `npm run e2e` when a user flow changes.
+- For UI changes, check 375px, 768px, 1280px and 1920px in the browser.
+- Report results as they are. If a check can't run, say so.
+
+## Security
+
+- Never commit secrets, `.env` files or credentials. Every `NEXT_PUBLIC_` value ends up in the browser.
+- Validate input at every boundary (Route Handlers, `searchParams`) and keep user-facing errors generic.
+- Never put personal data in URLs.
+
+## Commit And Pull Request Guidance
+
+- Work on a feature branch and merge through a pull request. One logical change per commit with a short, verb-first subject.
+- Never commit build output (`.next/`, `out/`), test reports (`playwright-report/`, `test-results/`) or caches.
+- PR notes cover what changed and why, the related `SPEC.md` sections, screenshots for visual changes and the checks you ran.

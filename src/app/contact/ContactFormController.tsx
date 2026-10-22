@@ -4,20 +4,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useForm, type FieldErrors } from "react-hook-form";
 import ContactForm from "@/components/contact/ContactForm";
-import type { SelectFieldOption } from "@/components/ui/SelectField";
 import StatusAlert from "@/components/ui/StatusAlert";
+import { contactEmail, siteConfig } from "@/content/site";
 import useStatusAlert from "@/hooks/useStatusAlert";
 import { scrollToFirstFieldError } from "@/lib/field-error-scroll";
+import { buildMailtoHref } from "@/lib/utils";
 import { enquiryFormSchema } from "@/server/enquiries/schemas";
-import type {
-    CreateEnquiryInput,
-    EnquiryFormValues,
-    EnquiryMutationResult,
-} from "@/server/enquiries/types";
+import type { EnquiryFormValues } from "@/server/enquiries/types";
 import { listingSearchParams } from "@/server/properties/options";
 
+interface PropertyOption {
+    value: string;
+    label: string;
+}
+
 interface ContactFormControllerProps {
-    propertyOptions: SelectFieldOption[];
+    propertyOptions: PropertyOption[];
 }
 
 const enquiryFieldOrder = [
@@ -41,16 +43,29 @@ const emptyFormValues: EnquiryFormValues = {
     propertyId: "",
     message: "",
 };
-const genericErrorMessage = "Unable to send your message. Please try again.";
 
-function toCreateEnquiryInput(values: EnquiryFormValues): CreateEnquiryInput {
-    return {
-        name: values.name.trim(),
-        email: values.email.trim().toLowerCase(),
-        phone: values.phone.trim() || undefined,
-        propertyId: values.propertyId || undefined,
-        message: values.message.trim(),
-    };
+// The site is static, so there is no server to receive the form. The enquiry opens in the
+// visitor's email app, addressed to the sales team and ready to send.
+function toEnquiryEmailHref(values: EnquiryFormValues, propertyLabel: string | undefined) {
+    const details = [
+        `Name: ${values.name.trim()}`,
+        `Email: ${values.email.trim().toLowerCase()}`,
+        values.phone.trim() ? `Phone / WhatsApp: ${values.phone.trim()}` : null,
+        propertyLabel ? `Home: ${propertyLabel}` : null,
+    ].filter(Boolean);
+
+    return buildMailtoHref(contactEmail, {
+        subject: propertyLabel
+            ? `Enquiry: ${propertyLabel}`
+            : `Enquiry from the ${siteConfig.name} website`,
+        body: `${values.message.trim()}\n\n${details.join("\n")}`,
+    });
+}
+
+function openEmailApp(href: string) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.click();
 }
 
 function getFieldErrorMessages(errors: FieldErrors<EnquiryFormValues>) {
@@ -67,14 +82,6 @@ function getFieldErrorMessages(errors: FieldErrors<EnquiryFormValues>) {
     return fieldErrors;
 }
 
-async function readEnquiryResponse(response: Response): Promise<Partial<EnquiryMutationResult>> {
-    try {
-        return (await response.json()) as Partial<EnquiryMutationResult>;
-    } catch {
-        return {};
-    }
-}
-
 export default function ContactFormController({ propertyOptions }: ContactFormControllerProps) {
     const searchParams = useSearchParams();
     const { alert, dismissStatusAlert, showStatusAlert } = useStatusAlert();
@@ -84,7 +91,6 @@ export default function ContactFormController({ propertyOptions }: ContactFormCo
         control,
         formState: { errors, isSubmitting },
         handleSubmit,
-        reset,
     } = useForm<EnquiryFormValues>({
         defaultValues: {
             ...emptyFormValues,
@@ -101,37 +107,18 @@ export default function ContactFormController({ propertyOptions }: ContactFormCo
         );
     }
 
-    async function handleValidSubmit(values: EnquiryFormValues) {
-        try {
-            const response = await fetch("/api/enquiries", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(toCreateEnquiryInput(values)),
-            });
-            const result = await readEnquiryResponse(response);
+    // The form keeps its values in case the visitor's email app doesn't open.
+    function handleValidSubmit(values: EnquiryFormValues) {
+        const propertyLabel = values.propertyId
+            ? propertyOptions.find((option) => option.value === values.propertyId)?.label
+            : undefined;
 
-            if (!response.ok || !result.ok) {
-                showStatusAlert({
-                    tone: "error",
-                    title: "Message not sent",
-                    message: result.message || genericErrorMessage,
-                });
-                return;
-            }
-
-            showStatusAlert({
-                tone: "success",
-                title: "Message sent",
-                message: result.message || "Our team will contact you soon.",
-            });
-            reset(emptyFormValues);
-        } catch {
-            showStatusAlert({
-                tone: "error",
-                title: "Message not sent",
-                message: genericErrorMessage,
-            });
-        }
+        openEmailApp(toEnquiryEmailHref(values, propertyLabel));
+        showStatusAlert({
+            tone: "success",
+            title: "Opening your email app",
+            message: `Your message is ready to send to ${contactEmail}. We reply within one working day.`,
+        });
     }
 
     return (

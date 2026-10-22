@@ -1,15 +1,7 @@
-import { cacheLife } from "next/cache";
 import Link from "next/link";
 import Container from "@/components/ui/Container";
 import { contactChannels, navLinks, siteConfig } from "@/content/site";
 import SocialLinks from "./SocialLinks";
-
-async function CurrentYear() {
-    "use cache";
-    cacheLife("days");
-
-    return new Date().getFullYear();
-}
 
 const footerLinkClasses =
     "rounded-sm text-micro text-ink-muted transition-all duration-200 ease-out hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink motion-reduce:transition-none";
@@ -65,8 +57,8 @@ export default function Footer() {
             <Container>
                 <div className="flex flex-col items-center gap-2 border-t border-line py-5 text-center text-micro text-ink-muted sm:flex-row sm:justify-between sm:text-left">
                     <p>
-                        Copyright © <CurrentYear /> {siteConfig.name} {siteConfig.city}. All rights
-                        reserved.
+                        Copyright © {new Date().getFullYear()} {siteConfig.name} {siteConfig.city}.
+                        All rights reserved.
                     </p>
                     <p>Manado, North Sulawesi, Indonesia</p>
                 </div>

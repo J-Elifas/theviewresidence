@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEnquirySchema, enquiryFormSchema } from "@/server/enquiries/schemas";
+import { enquiryFormSchema } from "@/server/enquiries/schemas";
 
 const validEnquiry = {
     name: "  Maria Lumentut ",
@@ -13,39 +13,15 @@ function getInvalidFields(result: { error?: { issues: { path: PropertyKey[] }[] 
     return (result.error?.issues ?? []).map((issue) => String(issue.path[0])).sort();
 }
 
-describe("createEnquirySchema", () => {
+describe("enquiryFormSchema", () => {
     it("trims text and lowercases the email", () => {
-        const result = createEnquirySchema.parse(validEnquiry);
+        const result = enquiryFormSchema.parse(validEnquiry);
 
         expect(result.name).toBe("Maria Lumentut");
         expect(result.email).toBe("maria@example.com");
     });
 
-    it("accepts an enquiry without phone or property", () => {
-        const result = createEnquirySchema.safeParse({
-            name: "Maria",
-            email: "maria@example.com",
-            message: "Please send me the price list.",
-        });
-
-        expect(result.success).toBe(true);
-    });
-
-    it("rejects an invalid email, phone and short message", () => {
-        const result = createEnquirySchema.safeParse({
-            ...validEnquiry,
-            email: "maria@",
-            phone: "12",
-            message: "Hi",
-        });
-
-        expect(result.success).toBe(false);
-        expect(getInvalidFields(result)).toEqual(["email", "message", "phone"]);
-    });
-});
-
-describe("enquiryFormSchema", () => {
-    it("accepts empty optional fields from the form", () => {
+    it("accepts empty optional fields", () => {
         const result = enquiryFormSchema.safeParse({
             ...validEnquiry,
             phone: "",
@@ -67,9 +43,14 @@ describe("enquiryFormSchema", () => {
         expect(getInvalidFields(result)).toEqual(["email", "message", "name"]);
     });
 
-    it("still validates a phone number when one is entered", () => {
-        const result = enquiryFormSchema.safeParse({ ...validEnquiry, phone: "abc" });
+    it("rejects an invalid email, phone and short message", () => {
+        const result = enquiryFormSchema.safeParse({
+            ...validEnquiry,
+            email: "maria@",
+            phone: "12",
+            message: "Hi",
+        });
 
-        expect(getInvalidFields(result)).toEqual(["phone"]);
+        expect(getInvalidFields(result)).toEqual(["email", "message", "phone"]);
     });
 });

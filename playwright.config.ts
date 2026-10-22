@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Port 3100 keeps end-to-end runs clear of a `next dev` server on 3000.
+// Serves the static export in `out/` (clean URLs, like Firebase Hosting) on port 3100, clear of
+// a `next dev` server on 3000.
 const PORT = 3100;
 const HOST = "127.0.0.1";
 const baseURL = `http://${HOST}:${PORT}`;
@@ -20,7 +21,7 @@ export default defineConfig({
         video: "off",
     },
     webServer: {
-        command: `npm run start -- -H ${HOST} -p ${PORT}`,
+        command: `npx serve out --listen tcp://${HOST}:${PORT} --no-clipboard`,
         url: baseURL,
         reuseExistingServer: false,
         timeout: 60_000,

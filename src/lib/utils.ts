@@ -42,3 +42,11 @@ export function formatPrice(value: number) {
 export function isActivePath(currentPath: string, href: string) {
     return href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 }
+
+// Encodes with %20 (not "+") so every mail app shows spaces and line breaks correctly.
+export function buildMailtoHref(
+    address: string,
+    { body, subject }: { subject: string; body: string }
+) {
+    return `mailto:${address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}

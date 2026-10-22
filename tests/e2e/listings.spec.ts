@@ -15,6 +15,43 @@ test.describe("listings", () => {
         await expect(page.getByRole("article")).toHaveCount(2);
     });
 
+    test("the hero price list shows every option below the search card", async ({
+        isMobile,
+        page,
+    }) => {
+        // Short screens put the search card at the bottom of the hero: a small phone here, and
+        // the 1280 x 720 desktop viewport.
+        if (isMobile) {
+            await page.setViewportSize({ width: 375, height: 667 });
+        }
+        await page.goto("/");
+
+        const priceRange = page.getByRole("combobox", { name: "Price range" });
+        await priceRange.click();
+        await expect(priceRange).toHaveAttribute("aria-expanded", "true");
+        const lastOption = page.getByRole("option", { name: "Above Rp 3 billion" });
+
+        // Scroll the page like a finger would (scrollIntoView would also scroll a clipping
+        // ancestor), then check the option is really on top at its own position.
+        const isOnTop = await lastOption.evaluate(async (option) => {
+            const { top } = option.getBoundingClientRect();
+            window.scrollBy({ top: top - window.innerHeight / 2, behavior: "instant" });
+            await new Promise(requestAnimationFrame);
+
+            const box = option.getBoundingClientRect();
+            const hit = document.elementFromPoint(
+                box.left + box.width / 2,
+                box.top + box.height / 2
+            );
+            return option.contains(hit);
+        });
+        expect(isOnTop).toBe(true);
+
+        await lastOption.click();
+        await page.getByRole("button", { name: "Search" }).click();
+        await expect(page).toHaveURL(/\/lists\?price=above-3b$/);
+    });
+
     test("filters update the results and the URL", async ({ page }) => {
         await page.goto("/lists");
 

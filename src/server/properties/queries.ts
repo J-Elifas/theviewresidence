@@ -1,6 +1,5 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
 import { formatPrice } from "@/lib/utils";
 import { propertySeedData } from "./seed-data";
 import type { HomePageData, PropertyRecord, PropertyRow } from "./types";
@@ -20,10 +19,6 @@ function toPropertyRow(record: PropertyRecord): PropertyRow {
 }
 
 export async function listProperties(): Promise<PropertyRow[]> {
-    "use cache";
-    cacheLife("hours");
-    cacheTag("properties");
-
     const records = await readPropertyRecords();
     return records
         .map(toPropertyRow)

@@ -37,7 +37,8 @@ export default function ContactForm({
                 Send us a message
             </h2>
             <p className="mt-2 text-body text-ink-muted">
-                Tell us what you are looking for and we will reply within one working day.
+                Tell us what you are looking for. Sending opens your email app with your message
+                ready to go, and we reply within one working day.
             </p>
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2">

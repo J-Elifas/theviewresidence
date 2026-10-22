@@ -10,7 +10,10 @@ interface HeroSectionProps {
 
 export default function HeroSection({ searchForm }: HeroSectionProps) {
     return (
-        <section aria-labelledby="hero-title" className="relative isolate overflow-hidden">
+        // No overflow clipping here: the search card's option lists hang below the hero on short
+        // screens. The photo frame clips the photo, and z-10 keeps an open list above the
+        // sections that follow.
+        <section aria-labelledby="hero-title" className="relative z-10">
             {/* Phones and tablets: the photo fills the whole hero behind the text.
                 Desktop: the photo sits in a rounded frame on the right of the page container,
                 its first 30% fading into the page behind the text. */}

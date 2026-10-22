@@ -4,13 +4,15 @@ const nextConfig: NextConfig = {
     experimental: {
         agentFeedback: true,
     },
-    cacheComponents: true,
-    partialPrefetching: true,
+    // Static site: `next build` writes plain HTML, CSS and JS to `out/`, served by Firebase Hosting.
+    // Cache Components and Partial Prefetching need a Next.js server, so they stay off here.
+    output: "export",
     // Lets phones and tablets on the local network load dev assets (http://192.168.x.x:3000).
     allowedDevOrigins: ["192.168.*.*"],
     images: {
-        // Placeholder photography. Add the Firebase Storage host here when listings move to Firebase.
-        remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com", pathname: "/**" }],
+        // There is no image server in a static export, so the loader asks the image host to resize.
+        loader: "custom",
+        loaderFile: "./src/lib/image-loader.ts",
     },
 };
 

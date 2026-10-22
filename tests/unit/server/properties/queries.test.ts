@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 import { getHomePageData, listProperties, listPropertyOptions } from "@/server/properties/queries";
 
@@ -25,7 +24,7 @@ describe("properties queries", () => {
         expect(properties).toHaveLength(10);
         expect(properties[0]).toMatchObject({
             id: "siladen-bay-view-villa",
-            price: "Rp 3.950.000.000",
+            price: "Rp\u00a03.950.000.000",
             priceValue: 3_950_000_000,
         });
 

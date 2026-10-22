@@ -18,10 +18,12 @@ export const navLinks: NavLink[] = [
 ];
 
 // Placeholder contact details and social accounts. Replace with the client's real ones before launch.
+export const contactEmail = "hello@theviewresidence.co.id";
+
 export const contactLinks = {
     phone: "tel:+624310000000",
     whatsApp: "https://wa.me/6281100000000",
-    email: "mailto:hello@theviewresidence.co.id",
+    email: `mailto:${contactEmail}`,
     directions: "https://www.google.com/maps/search/?api=1&query=Manado%2C%20North%20Sulawesi",
 };
 
@@ -39,7 +41,7 @@ export const contactChannels: ContactChannel[] = [
         href: contactLinks.whatsApp,
         icon: MessageCircle,
     },
-    { label: "Email", value: "hello@theviewresidence.co.id", href: contactLinks.email, icon: Mail },
+    { label: "Email", value: contactEmail, href: contactLinks.email, icon: Mail },
     { label: "Opening hours", value: "Daily, 09.00 – 17.00 WITA", href: null, icon: Clock },
 ];
 

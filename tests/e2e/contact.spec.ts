@@ -32,8 +32,19 @@ test.describe("contact form", () => {
         );
     });
 
-    test("sends a valid enquiry and confirms it", async ({ page }) => {
-        await page.goto("/contact");
+    test("opens the email app with the enquiry ready to send", async ({ page }) => {
+        // Record the mailto hand-off instead of launching a real email app.
+        await page.addInitScript(() => {
+            const originalClick = HTMLAnchorElement.prototype.click;
+            HTMLAnchorElement.prototype.click = function (this: HTMLAnchorElement) {
+                if (this.href.startsWith("mailto:")) {
+                    document.documentElement.dataset.openedMailto = this.href;
+                    return;
+                }
+                originalClick.call(this);
+            };
+        });
+        await page.goto("/contact?property=klabat-type-70");
 
         await page.getByLabel("Full name").fill("Test Buyer");
         await page.getByLabel("Email").fill("test.buyer@example.com");
@@ -42,7 +53,18 @@ test.describe("contact form", () => {
             .fill("Test enquiry: please send the price list.");
         await page.getByRole("button", { name: "Send message" }).click();
 
-        await expect(page.getByRole("status").filter({ hasText: "Message sent" })).toBeVisible();
-        await expect(page.getByLabel("Full name")).toHaveValue("");
+        await expect(
+            page.getByRole("status").filter({ hasText: "Opening your email app" })
+        ).toBeVisible();
+        const href = await page.evaluate(() => document.documentElement.dataset.openedMailto);
+        const mailto = new URL(href ?? "");
+        expect(mailto.pathname).toBe("hello@theviewresidence.co.id");
+        expect(mailto.searchParams.get("subject")).toBe("Enquiry: Klabat Type 70");
+        expect(mailto.searchParams.get("body")).toContain("Name: Test Buyer");
+        expect(mailto.searchParams.get("body")).toContain(
+            "Test enquiry: please send the price list."
+        );
+        // The form keeps the text in case no email app opens.
+        await expect(page.getByLabel("Full name")).toHaveValue("Test Buyer");
     });
 });

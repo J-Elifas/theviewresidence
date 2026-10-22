@@ -18,9 +18,9 @@ export default function Header({ currentPath, mobileMenuButton }: HeaderProps) {
                 <Link
                     href="/"
                     aria-label="The View Residence Manado, home"
-                    className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+                    className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
                 >
-                    <Logo className="size-12 md:size-16" />
+                    <Logo className="size-6 md:size-6" />
                 </Link>
 
                 <nav aria-label="Main" className="hidden md:block">

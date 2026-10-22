@@ -2,8 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyGrid from "@/components/properties/PropertyGrid";
-import LogoMark from "@/components/svg/LogoMark";
 import Container from "@/components/ui/Container";
+import Logo from "@/components/ui/Logo";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { salesHighlight } from "@/content/about";
 import { listingSearchParams } from "@/server/properties/options";
@@ -43,9 +43,7 @@ export default function FeaturedPropertiesSection({
                 <PropertyGrid className="mt-14">
                     {firstProperty ? renderCard(firstProperty) : null}
                     <div className="flex min-h-80 flex-col justify-between gap-10 rounded-3xl bg-aqua p-8">
-                        <span className="grid size-12 place-items-center rounded-full bg-night">
-                            <LogoMark className="size-7 translate-x-px" />
-                        </span>
+                        <Logo className="size-10" />
                         <div>
                             <p className="text-headline text-ink">{salesHighlight.value}</p>
                             <p className="mt-3 max-w-xs text-ink-muted">{salesHighlight.label}</p>

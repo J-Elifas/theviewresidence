@@ -106,7 +106,7 @@ Clean, modern and calm, in the spirit of apple.com:
 
 ## Brand
 
-The logo is SVG: `LogoBadge` is the full circular emblem (gold ring, faceted gold "V", "THE VIEW RESIDENCE", "MANADO", "Quality Living"), `LogoMark` is the gold V alone. `Logo` shows `LogoBadge` in the header (48px on phones, 64px from tablet width up). The footer has no logo. The About page shows `LogoBadge` on its own, without a background card. The favicon is `public/favicon.svg`.
+The logo is SVG: `LogoBadge` is the full circular emblem (gold ring, faceted gold "V", "THE VIEW RESIDENCE", "MANADO", "Quality Living"), `LogoMark` is the gold V alone. Everywhere except the About page the logo is the gold V alone, with no ring, disc or text: `Logo` shows `LogoMark` in its deeper gold for light backgrounds, in the header (36px on phones, 40px from tablet width up) and on the home page's featured card. The footer has no logo. The About page shows `LogoBadge` on its own, without a background card. The favicon (`public/favicon.svg`) is the gold V alone too.
 
 ## Color Palette
 

@@ -12,7 +12,7 @@ export interface ButtonStyleOptions {
 
 const variantClasses: Record<ButtonVariant, string> = {
     primary:
-        "bg-ink text-white shadow-[0_14px_30px_-18px_rgba(29,29,31,0.85)] hover:bg-ink/85 active:bg-ink disabled:bg-ink/40 disabled:shadow-none",
+        "bg-ink text-canvas shadow-[0_14px_30px_-18px_rgba(29,29,31,0.85)] hover:bg-ink/85 active:bg-ink disabled:bg-ink/40 disabled:shadow-none",
     secondary:
         "border border-line bg-canvas text-ink shadow-[0_1px_0_rgba(29,29,31,0.03)] hover:border-ink/30 hover:bg-surface disabled:text-ink-muted",
     ghost: "text-ink hover:bg-surface disabled:text-ink-muted",

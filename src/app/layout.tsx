@@ -3,6 +3,7 @@ import { Cormorant_Garamond } from "next/font/google";
 import { preconnect } from "react-dom";
 import Footer from "@/components/layout/Footer";
 import { siteConfig } from "@/content/site";
+import ThemeScript from "@/components/layout/ThemeScript";
 import SiteNavigationController from "./SiteNavigationController";
 import "./globals.css";
 
@@ -38,15 +39,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     preconnect("https://images.unsplash.com");
 
     return (
+        // The inline script sets `data-theme` before the first paint. suppressHydrationWarning lets
+        // React keep that value instead of the "light" rendered into the static HTML.
         <html
             lang="en"
+            data-theme="light"
             data-scroll-behavior="smooth"
+            suppressHydrationWarning
             className={`${cormorant.variable} h-full scroll-pt-16 antialiased md:scroll-pt-20 motion-safe:scroll-smooth`}
         >
+            <head>
+                <ThemeScript />
+            </head>
             <body className="flex min-h-full flex-col">
                 <a
                     href="#main"
-                    className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-caption focus:text-white"
+                    className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-caption focus:text-canvas"
                 >
                     Skip to content
                 </a>

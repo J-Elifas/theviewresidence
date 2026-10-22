@@ -10,13 +10,13 @@ interface PropertyStatusBadgeProps {
 const statusClasses: Record<PropertyStatus, string> = {
     available: "bg-canvas/90 text-ink",
     reserved: "bg-canvas/90 text-ink",
-    sold: "bg-ink text-white",
+    sold: "bg-ink text-canvas",
 };
 
 const dotClasses: Record<PropertyStatus, string> = {
     available: "bg-success",
     reserved: "bg-warning",
-    sold: "bg-white/70",
+    sold: "bg-canvas/70",
 };
 
 export default function PropertyStatusBadge({ className, status }: PropertyStatusBadgeProps) {

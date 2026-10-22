@@ -1,29 +1,32 @@
 import { useId } from "react";
 import type { SvgIconProps } from "./types";
 
-type LogoMarkSurface = "dark" | "light";
+type LogoMarkSurface = "badge" | "page";
 type FacetGradient = [top: string, bottom: string];
 
 interface LogoMarkProps extends SvgIconProps {
-    /** The background behind the mark. Light backgrounds get a deeper gold so the pale facet shows. */
+    /**
+     * "badge": the fixed gold made for LogoBadge's black disc. "page": the page background, with a
+     * deeper gold on white and the badge's brighter gold in dark mode (CSS variables in globals.css).
+     */
     surface?: LogoMarkSurface;
 }
 
 const facetGradients: Record<LogoMarkSurface, Record<"light" | "mid" | "dark", FacetGradient>> = {
-    dark: {
+    badge: {
         light: ["#f8e7ae", "#c9a24a"],
         mid: ["#ecd189", "#a47c2c"],
         dark: ["#c99a3b", "#6f5220"],
     },
-    light: {
-        light: ["#e6c56e", "#b38a34"],
-        mid: ["#d6ad52", "#94702a"],
-        dark: ["#ad8536", "#5b4318"],
+    page: {
+        light: ["var(--logo-light-top)", "var(--logo-light-bottom)"],
+        mid: ["var(--logo-mid-top)", "var(--logo-mid-bottom)"],
+        dark: ["var(--logo-dark-top)", "var(--logo-dark-bottom)"],
     },
 };
 
 // The gold "V" from The View Residence emblem, drawn as three facets.
-export default function LogoMark({ surface = "dark", title, ...props }: LogoMarkProps) {
+export default function LogoMark({ surface = "badge", title, ...props }: LogoMarkProps) {
     const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
     const gradients = facetGradients[surface];
 
@@ -37,10 +40,11 @@ export default function LogoMark({ surface = "dark", title, ...props }: LogoMark
         >
             {title ? <title>{title}</title> : null}
             <defs>
+                {/* Colours go in `style`: CSS variables don't work in SVG presentation attributes. */}
                 {Object.entries(gradients).map(([facet, [top, bottom]]) => (
                     <linearGradient key={facet} id={`${id}-${facet}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stopColor={top} />
-                        <stop offset="1" stopColor={bottom} />
+                        <stop offset="0" style={{ stopColor: top }} />
+                        <stop offset="1" style={{ stopColor: bottom }} />
                     </linearGradient>
                 ))}
             </defs>

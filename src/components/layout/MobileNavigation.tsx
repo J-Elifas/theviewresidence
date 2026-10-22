@@ -8,13 +8,16 @@ import ButtonLink from "@/components/ui/ButtonLink";
 import { navLinks } from "@/content/site";
 import { cn, isActivePath } from "@/lib/utils";
 import SocialLinks from "./SocialLinks";
+import ThemeSwitch from "./ThemeSwitch";
 
 interface MobileNavigationProps {
     id: string;
     isOpen: boolean;
     currentPath: string;
+    isDarkTheme: boolean;
     onClose: () => void;
     onNavigate: () => void;
+    onToggleTheme: (trigger: HTMLElement) => void;
 }
 
 const swipeCloseDistance = 70;
@@ -22,9 +25,11 @@ const swipeCloseDistance = 70;
 export default function MobileNavigation({
     currentPath,
     id,
+    isDarkTheme,
     isOpen,
     onClose,
     onNavigate,
+    onToggleTheme,
 }: MobileNavigationProps) {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -114,7 +119,9 @@ export default function MobileNavigation({
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 className={cn(
-                    "absolute inset-y-0 right-0 flex w-[min(22rem,calc(100vw-2.5rem))] flex-col bg-canvas shadow-[0_0_60px_-20px_rgba(11,11,12,0.5)] transition-all duration-300 ease-out motion-reduce:transition-none",
+                    // The left border is there in both themes (transparent in light), so showing
+                    // it in dark mode doesn't move the links by a pixel.
+                    "absolute inset-y-0 right-0 flex w-[min(22rem,calc(100vw-2.5rem))] flex-col border-l border-transparent bg-canvas shadow-[0_0_60px_-20px_rgba(11,11,12,0.5)] transition-all duration-300 ease-out motion-reduce:transition-none dark:border-line-soft",
                     isOpen ? "translate-x-0" : "translate-x-full"
                 )}
             >
@@ -155,6 +162,12 @@ export default function MobileNavigation({
                         })}
                     </ul>
                 </nav>
+
+                <ThemeSwitch
+                    isDark={isDarkTheme}
+                    onToggle={onToggleTheme}
+                    className="shrink-0 px-6 pb-5"
+                />
 
                 <div className="shrink-0 space-y-5 border-t border-line-soft px-6 py-6">
                     <ButtonLink href="/contact" size="lg" isFullWidth onClick={onNavigate}>

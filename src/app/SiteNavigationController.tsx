@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Header from "@/components/layout/Header";
 import MobileMenuButton from "@/components/layout/MobileMenuButton";
 import MobileNavigation from "@/components/layout/MobileNavigation";
+import ThemeToggleButton from "@/components/layout/ThemeToggleButton";
+import useTheme from "@/hooks/useTheme";
 
 const mobileNavigationId = "mobile-navigation";
 const desktopQuery = "(min-width: 768px)";
@@ -13,6 +15,7 @@ export default function SiteNavigationController() {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+    const { isDark, handleToggleTheme } = useTheme();
 
     // Closing from the drawer (Escape, backdrop, close button) hands focus back to the menu button.
     const handleMobileClose = useCallback(() => {
@@ -60,6 +63,13 @@ export default function SiteNavigationController() {
         <>
             <Header
                 currentPath={pathname}
+                themeToggle={
+                    <ThemeToggleButton
+                        isDark={isDark}
+                        onToggle={handleToggleTheme}
+                        className="hidden md:inline-flex"
+                    />
+                }
                 mobileMenuButton={
                     <MobileMenuButton
                         ref={menuButtonRef}
@@ -73,8 +83,10 @@ export default function SiteNavigationController() {
                 id={mobileNavigationId}
                 isOpen={isMobileOpen}
                 currentPath={pathname}
+                isDarkTheme={isDark}
                 onClose={handleMobileClose}
                 onNavigate={() => setIsMobileOpen(false)}
+                onToggleTheme={handleToggleTheme}
             />
         </>
     );

@@ -78,7 +78,7 @@ export default function PropertyCard({
                     </p>
                     <span
                         aria-hidden="true"
-                        className="inline-flex h-10 items-center rounded-xl border border-line bg-canvas px-5 text-caption font-medium text-ink transition-all duration-200 ease-out group-hover:border-ink group-hover:bg-ink group-hover:text-white motion-reduce:transition-none"
+                        className="inline-flex h-10 items-center rounded-xl border border-line bg-canvas px-5 text-caption font-medium text-ink transition-all duration-200 ease-out group-hover:border-ink group-hover:bg-ink group-hover:text-canvas motion-reduce:transition-none"
                     >
                         Details
                     </span>

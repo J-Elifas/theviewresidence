@@ -196,7 +196,7 @@ export default function Modal({
                 aria-describedby={description ? descriptionId : undefined}
                 inert={!isOpen ? true : undefined}
                 className={cn(
-                    "relative z-10 flex max-h-[calc(100dvh-1rem)] w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-canvas shadow-[0_30px_80px_-34px_rgba(11,11,12,0.6)] transition-all motion-reduce:transition-none sm:max-h-[calc(100dvh-3rem)] sm:rounded-[1.75rem]",
+                    "relative z-10 flex max-h-[calc(100dvh-1rem)] w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-canvas shadow-[0_30px_80px_-34px_rgba(11,11,12,0.6)] dark:ring-1 dark:ring-line-soft transition-all motion-reduce:transition-none sm:max-h-[calc(100dvh-3rem)] sm:rounded-[1.75rem]",
                     sizeClasses[size],
                     !isOpen && "pointer-events-none",
                     isVisible

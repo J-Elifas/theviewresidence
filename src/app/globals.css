@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+/* `dark:` follows the theme the visitor picked (`<html data-theme>`), not only the device. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
+    color-scheme: light;
     --canvas: #ffffff;
     --surface: #f5f5f7;
     --surface-strong: #e8e8ed;
@@ -16,6 +20,61 @@
     --success: #1f7a4d;
     --warning: #b26b00;
     --danger: #c0352b;
+
+    /* The page's own background (<html>), which phone browsers use to colour their bars. */
+    --page-background: #ffffff;
+
+    /* Gold V logo on the page (LogoMark surface="page"): a deeper gold so it holds up on white. */
+    --logo-light-top: #e6c56e;
+    --logo-light-bottom: #b38a34;
+    --logo-mid-top: #d6ad52;
+    --logo-mid-bottom: #94702a;
+    --logo-dark-top: #ad8536;
+    --logo-dark-bottom: #5b4318;
+}
+
+/* Black and white like Apple's dark pages, with the gold logo as the only colour. The aqua
+   accent becomes a lifted grey, since a tinted surface looks muddy on black. */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --canvas: #000000;
+    --surface: #161617;
+    --surface-strong: #2c2c2e;
+    --ink: #f5f5f7;
+    --ink-muted: #a1a1a6;
+    --line: #424245;
+    --line-soft: #2c2c2e;
+    --aqua: #232325;
+    --aqua-strong: #3a3a3c;
+    --success: #30d158;
+    --warning: #ff9f0a;
+    --danger: #ff453a;
+    --page-background: #000000;
+
+    /* The emblem's original, brighter gold, made for a black background. */
+    --logo-light-top: #f8e7ae;
+    --logo-light-bottom: #c9a24a;
+    --logo-mid-top: #ecd189;
+    --logo-mid-bottom: #a47c2c;
+    --logo-dark-top: #c99a3b;
+    --logo-dark-bottom: #6f5220;
+}
+
+/* Switching theme (useTheme) never fades colours. Grey-on-white elements such as outlined buttons
+   and footer links become grey-on-black, so any fade (or View Transitions crossfade) passes the
+   background through their grey and they blink out. On desktop a circle growing from the
+   sun/moon button uncovers the new theme, so each pixel changes once; elsewhere the theme
+   switches in one frame. The moment it changes, every other transition is off, so nothing fades
+   on its own; the sun, moon and switch knob (`data-theme-motion`) keep theirs. */
+:root[data-theme-swapping] *:not([data-theme-motion], [data-theme-motion] *) {
+    transition: none !important;
+}
+
+/* The reveal animates the new view's clip-path from useTheme; drop the default crossfade. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }
 
 @theme inline {
@@ -121,6 +180,11 @@
 }
 
 @layer base {
+    /* What phone browsers read to colour their bars. The body paints the page over it. */
+    html {
+        background-color: var(--page-background);
+    }
+
     body {
         background: var(--canvas);
         color: var(--ink);

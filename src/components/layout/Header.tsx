@@ -8,10 +8,12 @@ import { cn, isActivePath } from "@/lib/utils";
 
 interface HeaderProps {
     currentPath: string;
+    /** Shown from tablet width up; phones get the switch in the mobile menu. */
+    themeToggle: ReactNode;
     mobileMenuButton: ReactNode;
 }
 
-export default function Header({ currentPath, mobileMenuButton }: HeaderProps) {
+export default function Header({ currentPath, mobileMenuButton, themeToggle }: HeaderProps) {
     return (
         <header className="sticky top-0 z-40 border-b border-line-soft/80 bg-canvas/80 backdrop-blur-xl backdrop-saturate-150">
             <Container className="flex h-16 items-center justify-between gap-6 md:h-20">
@@ -46,7 +48,8 @@ export default function Header({ currentPath, mobileMenuButton }: HeaderProps) {
                     </ul>
                 </nav>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-8 lg:gap-10">
+                    {themeToggle}
                     <ButtonLink href="/contact" size="sm" className="hidden px-7 md:inline-flex">
                         Book a visit
                     </ButtonLink>

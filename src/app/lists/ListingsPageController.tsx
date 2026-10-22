@@ -4,7 +4,7 @@ import { SearchX } from "lucide-react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyDetailsModal from "@/components/properties/PropertyDetailsModal";
 import PropertyFilterBar from "@/components/properties/PropertyFilterBar";
-import PropertyGrid from "@/components/properties/PropertyGrid";
+import PropertyGrid, { firstRowCardCount } from "@/components/properties/PropertyGrid";
 import Button from "@/components/ui/Button";
 import usePropertyListings from "@/hooks/properties/usePropertyListings";
 import { listingSearchParams } from "@/server/properties/options";
@@ -38,11 +38,12 @@ export default function ListingsPageController({ properties }: ListingsPageContr
 
             {results.length > 0 ? (
                 <PropertyGrid className="mt-12">
-                    {results.map((property) => (
+                    {results.map((property, index) => (
                         <PropertyCard
                             key={property.id}
                             property={property}
                             detailsHref={`/lists?${listingSearchParams.property}=${property.id}`}
+                            imageLoading={index < firstRowCardCount ? "eager" : "lazy"}
                             onOpenDetails={handleOpenDetails}
                         />
                     ))}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
+import { preconnect } from "react-dom";
 import Footer from "@/components/layout/Footer";
 import { siteConfig } from "@/content/site";
 import SiteNavigationController from "./SiteNavigationController";
@@ -33,6 +34,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+    // Every photo comes from Unsplash, so open the connection before the first <img> is parsed.
+    preconnect("https://images.unsplash.com");
+
     return (
         <html
             lang="en"

@@ -127,7 +127,7 @@ Create a folder when its first file needs it, not in advance.
 - **Every CSS transition uses `transition-all`** with a duration and easing (`transition-all duration-200 ease-out`) plus `motion-reduce:transition-none`. Animate opacity, translate, scale, color and shadow, not width, height or position. Photos zoom with `group-hover:scale-[1.04]` over 500ms.
 - Fixed overlays (drawers, modals, toasts) render outside the sticky header or in a portal: an ancestor with `backdrop-filter` turns `position: fixed` into positioning relative to that ancestor.
 - `scroll-padding-top` on `<html>` must equal the sticky header height (`scroll-pt-16 md:scroll-pt-20` for a 64px / 80px header). If it is larger, Next.js treats the top of the new page as off-screen after navigation and scrolls partway down it. Give scroll targets extra room with `scroll-mt-*` instead (see `FieldLabel`), and update both values together if the header height changes.
-- Images use `next/image` with `fill` + accurate `sizes` and meaningful `alt`. Only the hero image is eager (`loading="eager"`, `fetchPriority="high"`).
+- Photos use `ui/RevealImage` (`next/image` with `fill`, a shimmer placeholder and a blur-in reveal) with accurate `sizes` and meaningful `alt`. The home hero is a plain `next/image` with `loading="eager"` and `fetchPriority="high"`, so the page's main image (LCP) isn't held back by the reveal. Everything else is lazy, except photos on screen as they appear: the first row on `/lists` and the details modal use `loading="eager"`.
 - Icons come from lucide-react or `components/svg/`. Decorative icons get `aria-hidden="true"`; icon-only buttons get an `aria-label`.
 
 ## Forms

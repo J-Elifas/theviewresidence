@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+// Cards in the first row of the widest grid, on screen as the Lists page opens. Their photos load
+// eagerly, since the browser counts one of them as the page's main image (LCP).
+export const firstRowCardCount = 3;
+
 interface PropertyGridProps {
     children: ReactNode;
     className?: string;

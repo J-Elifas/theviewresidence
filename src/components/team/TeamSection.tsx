@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Container from "@/components/ui/Container";
+import RevealImage from "@/components/ui/RevealImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { teamMembers } from "@/content/team";
 import { cn } from "@/lib/utils";
@@ -22,12 +22,11 @@ export default function TeamSection({ className }: TeamSectionProps) {
                     {teamMembers.map((member) => (
                         <li key={member.name}>
                             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-surface-strong">
-                                <Image
+                                {/* The list caps at 72rem: three 368px columns from 1232px up. */}
+                                <RevealImage
                                     src={member.imageUrl}
                                     alt={`Portrait of ${member.name}`}
-                                    fill
-                                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                                    className="object-cover"
+                                    sizes="(min-width: 1232px) 368px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                                 />
                             </div>
                             <div className="mt-5 px-1">

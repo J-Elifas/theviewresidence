@@ -13,12 +13,15 @@ interface PropertyCardProps {
     detailsHref: string;
     /** When set, a plain click opens the details in place instead of following the link. */
     onOpenDetails?: (propertyId: string) => void;
+    /** "eager" for cards on screen as the page opens. */
+    imageLoading?: "eager" | "lazy";
     className?: string;
 }
 
 export default function PropertyCard({
     className,
     detailsHref,
+    imageLoading = "lazy",
     onOpenDetails,
     property,
 }: PropertyCardProps) {
@@ -43,7 +46,8 @@ export default function PropertyCard({
                     src={property.imageUrl}
                     alt={property.title}
                     sizes="(min-width: 1920px) 600px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="transition-all duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
+                    loading={imageLoading}
+                    className="group-hover:scale-[1.04]"
                 />
                 <span className="absolute top-4 left-4 rounded-full bg-canvas/90 px-3 py-1 text-micro font-medium text-ink backdrop-blur">
                     {propertyTypeLabels[property.propertyType]}

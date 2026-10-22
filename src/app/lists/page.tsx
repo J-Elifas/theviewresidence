@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyFilterBar from "@/components/properties/PropertyFilterBar";
-import PropertyGrid from "@/components/properties/PropertyGrid";
+import PropertyGrid, { firstRowCardCount } from "@/components/properties/PropertyGrid";
 import Container from "@/components/ui/Container";
 import { listingSearchParams } from "@/server/properties/options";
 import { listProperties } from "@/server/properties/queries";
@@ -42,11 +42,12 @@ export default async function ListsPage() {
                                 hasActiveFilters={false}
                             />
                             <PropertyGrid className="mt-12">
-                                {properties.map((property) => (
+                                {properties.map((property, index) => (
                                     <PropertyCard
                                         key={property.id}
                                         property={property}
                                         detailsHref={`/lists?${listingSearchParams.property}=${property.id}`}
+                                        imageLoading={index < firstRowCardCount ? "eager" : "lazy"}
                                     />
                                 ))}
                             </PropertyGrid>

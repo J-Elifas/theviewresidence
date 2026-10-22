@@ -34,7 +34,7 @@ export default function Header({ currentPath, mobileMenuButton }: HeaderProps) {
                                         href={link.href}
                                         aria-current={isActive ? "page" : undefined}
                                         className={cn(
-                                            "rounded-sm text-micro transition-all duration-200 ease-out hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink motion-reduce:transition-none",
+                                            "rounded-sm text-micro transition-all duration-200 ease-out hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink motion-reduce:transition-none font-semibold",
                                             isActive ? "text-ink" : "text-ink/70"
                                         )}
                                     >

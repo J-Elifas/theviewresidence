@@ -1,9 +1,9 @@
-import { Bath, BedDouble, RulerDimensionLine } from "lucide-react";
+import { Bath, BedDouble } from "lucide-react";
 import type { PropertyRow } from "@/server/properties/types";
 import { cn } from "@/lib/utils";
 
 interface PropertySpecsProps {
-    property: Pick<PropertyRow, "bedrooms" | "bathrooms" | "buildingArea">;
+    property: Pick<PropertyRow, "bedrooms" | "bathrooms" | "buildingArea" | "landArea">;
     className?: string;
 }
 
@@ -12,10 +12,14 @@ function pluralize(count: number, noun: string) {
 }
 
 export default function PropertySpecs({ className, property }: PropertySpecsProps) {
-    const specs = [
+    const roomSpecs = [
         { icon: BedDouble, label: pluralize(property.bedrooms, "bed") },
         { icon: Bath, label: pluralize(property.bathrooms, "bath") },
-        { icon: RulerDimensionLine, label: `${property.buildingArea} m²` },
+    ];
+    // Indonesian listings label areas LB (luas bangunan) and LT (luas tanah).
+    const areaSpecs = [
+        { abbreviation: "LB", name: "Building area", area: property.buildingArea },
+        { abbreviation: "LT", name: "Land area", area: property.landArea },
     ];
 
     return (
@@ -25,10 +29,19 @@ export default function PropertySpecs({ className, property }: PropertySpecsProp
                 className
             )}
         >
-            {specs.map(({ icon: Icon, label }) => (
+            {roomSpecs.map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-1.5">
                     <Icon aria-hidden="true" className="size-4" strokeWidth={1.75} />
                     {label}
+                </li>
+            ))}
+            {areaSpecs.map(({ abbreviation, area, name }) => (
+                <li key={abbreviation} className="flex items-center gap-1.5">
+                    <span aria-hidden="true" className="text-ink-muted">
+                        {abbreviation}
+                    </span>
+                    <span className="sr-only">{name}</span>
+                    {area} m²
                 </li>
             ))}
         </ul>

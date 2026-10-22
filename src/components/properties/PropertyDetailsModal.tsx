@@ -31,8 +31,8 @@ export default function PropertyDetailsModal({ onClose, property }: PropertyDeta
         { label: "Bedrooms", value: displayedProperty.bedrooms },
         { label: "Bathrooms", value: displayedProperty.bathrooms },
         { label: "Floors", value: displayedProperty.floors },
-        { label: "Building", value: `${displayedProperty.buildingArea} m²` },
-        { label: "Land", value: `${displayedProperty.landArea} m²` },
+        { label: "LB (Building)", value: `${displayedProperty.buildingArea} m²` },
+        { label: "LT (Land)", value: `${displayedProperty.landArea} m²` },
     ];
 
     return (
@@ -49,6 +49,7 @@ export default function PropertyDetailsModal({ onClose, property }: PropertyDeta
                     src={displayedProperty.imageUrl}
                     alt={displayedProperty.title}
                     sizes="(min-width: 896px) 832px, 100vw"
+                    loading="eager"
                 />
             </div>
 

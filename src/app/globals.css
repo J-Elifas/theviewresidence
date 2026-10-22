@@ -92,6 +92,34 @@
     --text-micro--letter-spacing: -0.01em;
 }
 
+/* Photo placeholder (RevealImage). It moves with transform only, so it runs off the main thread. */
+@theme {
+    --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+    @keyframes shimmer {
+        from {
+            transform: translateX(-100%);
+        }
+        70%,
+        to {
+            transform: translateX(100%);
+        }
+    }
+}
+
+/* RevealImage hides photos until they load, which needs JavaScript. Without it, show them now. */
+@media (scripting: none) {
+    [data-reveal="image"] {
+        opacity: 1;
+        filter: none;
+        scale: none;
+    }
+
+    [data-reveal="placeholder"] {
+        display: none;
+    }
+}
+
 @layer base {
     body {
         background: var(--canvas);

@@ -1,16 +1,24 @@
 import { House } from "lucide-react";
-import Image from "next/image";
+import RevealImage from "@/components/ui/RevealImage";
 import { cn } from "@/lib/utils";
 
 interface PropertyImageProps {
     src: string | null;
     alt: string;
     sizes: string;
+    /** "eager" for photos on screen as the page or modal opens. */
+    loading?: "eager" | "lazy";
     className?: string;
 }
 
 // Fills its positioned parent. Listings without photos get a branded placeholder.
-export default function PropertyImage({ alt, className, sizes, src }: PropertyImageProps) {
+export default function PropertyImage({
+    alt,
+    className,
+    loading = "lazy",
+    sizes,
+    src,
+}: PropertyImageProps) {
     if (!src) {
         return (
             <div
@@ -26,6 +34,6 @@ export default function PropertyImage({ alt, className, sizes, src }: PropertyIm
     }
 
     return (
-        <Image src={src} alt={alt} fill sizes={sizes} className={cn("object-cover", className)} />
+        <RevealImage src={src} alt={alt} sizes={sizes} loading={loading} className={className} />
     );
 }

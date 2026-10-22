@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Container from "@/components/ui/Container";
+import RevealImage from "@/components/ui/RevealImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { aboutImage, values } from "@/content/about";
 
@@ -8,12 +8,11 @@ export default function StorySection() {
         <section aria-labelledby="story-title" className="py-20 sm:py-24 lg:py-28">
             <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-surface lg:aspect-[4/5]">
-                    <Image
+                    {/* At 1920px: (1920 - 2 × 64px padding - 80px gap) / 2 = 856px. */}
+                    <RevealImage
                         src={aboutImage.src}
                         alt={aboutImage.alt}
-                        fill
-                        sizes="(min-width: 1024px) 50vw, 100vw"
-                        className="object-cover"
+                        sizes="(min-width: 1920px) 856px, (min-width: 1024px) 50vw, 100vw"
                     />
                 </div>
 

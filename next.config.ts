@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
         // There is no image server in a static export, so the loader asks the image host to resize.
         loader: "custom",
         loaderFile: "./src/lib/image-loader.ts",
+        // The default list ends at 3840px, which a 2x screen picks for the hero at 1920px wide.
+        // 2048px looks the same there at a fraction of the download.
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     },
 };
 

@@ -1,6 +1,6 @@
-import Image from "next/image";
 import SocialLinks from "@/components/layout/SocialLinks";
 import Container from "@/components/ui/Container";
+import RevealImage from "@/components/ui/RevealImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { discoverGallery } from "@/content/gallery";
 import type { GalleryImage } from "@/content/types";
@@ -16,12 +16,11 @@ interface GalleryTileProps {
 function GalleryTile({ className, image, sizes }: GalleryTileProps) {
     return (
         <div className={cn("group relative overflow-hidden rounded-3xl bg-surface", className)}>
-            <Image
+            <RevealImage
                 src={image.src}
                 alt={image.alt}
-                fill
                 sizes={sizes}
-                className="object-cover transition-all duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
+                className="group-hover:scale-[1.04]"
             />
         </div>
     );

@@ -13,6 +13,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 4,
         bathrooms: 4,
         floors: 2,
+        hasKitchen: null,
+        hasCarport: true,
+        hasBackGarden: null,
         buildingArea: 215,
         landArea: 320,
         description:
@@ -39,6 +42,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 4,
         bathrooms: 3,
         floors: 2,
+        hasKitchen: true,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 120,
         landArea: 200,
         description:
@@ -65,6 +71,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 3,
         bathrooms: 2,
         floors: 1,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: true,
         buildingArea: 70,
         landArea: 120,
         description:
@@ -90,6 +99,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 2,
         bathrooms: 3,
         floors: 3,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 180,
         landArea: 90,
         description:
@@ -115,6 +127,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 3,
         bathrooms: 2,
         floors: 2,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 82,
         landArea: 90,
         description:
@@ -140,6 +155,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 5,
         bathrooms: 5,
         floors: 3,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 285,
         landArea: 420,
         description:
@@ -166,6 +184,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 3,
         bathrooms: 3,
         floors: 2,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 90,
         landArea: 150,
         description:
@@ -191,6 +212,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 2,
         bathrooms: 2,
         floors: 2,
+        hasKitchen: true,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 65,
         landArea: 75,
         description:
@@ -216,6 +240,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 2,
         bathrooms: 1,
         floors: 1,
+        hasKitchen: null,
+        hasCarport: null,
+        hasBackGarden: null,
         buildingArea: 45,
         landArea: 96,
         description:
@@ -241,6 +268,9 @@ export const propertySeedData: PropertyRecord[] = [
         bedrooms: 2,
         bathrooms: 1,
         floors: 1,
+        hasKitchen: true,
+        hasCarport: true,
+        hasBackGarden: null,
         buildingArea: 36,
         landArea: 72,
         description:

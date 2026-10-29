@@ -17,6 +17,10 @@ export interface PropertyRecord {
     bedrooms: number;
     bathrooms: number;
     floors: number;
+    /** Null means availability has not been specified. */
+    hasKitchen: boolean | null;
+    hasCarport: boolean | null;
+    hasBackGarden: boolean | null;
     /** Building area in square metres. */
     buildingArea: number;
     /** Land area in square metres. */

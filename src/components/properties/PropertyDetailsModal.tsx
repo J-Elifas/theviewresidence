@@ -34,6 +34,11 @@ export default function PropertyDetailsModal({ onClose, property }: PropertyDeta
         { label: "LB (Building)", value: `${displayedProperty.buildingArea} m²` },
         { label: "LT (Land)", value: `${displayedProperty.landArea} m²` },
     ];
+    const amenities = [
+        { label: "Kitchen", isAvailable: displayedProperty.hasKitchen },
+        { label: "Carport", isAvailable: displayedProperty.hasCarport },
+        { label: "Rear Garden", isAvailable: displayedProperty.hasBackGarden },
+    ];
 
     return (
         <Modal
@@ -69,11 +74,32 @@ export default function PropertyDetailsModal({ onClose, property }: PropertyDeta
                 </p>
             </div>
 
-            <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <dl aria-label="Specifications" className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {facts.map((fact) => (
                     <div key={fact.label} className="rounded-2xl bg-surface px-4 py-3">
                         <dt className="text-micro text-ink-muted">{fact.label}</dt>
                         <dd className="mt-1 text-body font-semibold text-ink">{fact.value}</dd>
+                    </div>
+                ))}
+                {amenities.map(({ isAvailable, label }) => (
+                    <div key={label} className="rounded-2xl bg-surface px-4 py-3">
+                        <dt className="text-micro text-ink-muted">{label}</dt>
+                        <dd className="mt-1 flex h-6 items-center text-body font-semibold text-ink">
+                            {isAvailable ? (
+                                <Check aria-hidden="true" className="size-5" strokeWidth={2.5} />
+                            ) : (
+                                <span aria-hidden="true" className="text-ink-muted">
+                                    —
+                                </span>
+                            )}
+                            <span className="sr-only">
+                                {isAvailable === null
+                                    ? "Not specified"
+                                    : isAvailable
+                                        ? "Available"
+                                        : "Not available"}
+                            </span>
+                        </dd>
                     </div>
                 ))}
             </dl>

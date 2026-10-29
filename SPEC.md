@@ -135,6 +135,7 @@ Form controls follow the webluma component set:
 - `InputField` (wrapped by `TextInputField`, `EmailInputField`, `PhoneInputField`) shows an optional leading icon and divider. Email and phone fields get an icon by default.
 - `SelectField` is a custom listbox: keyboard support (arrows, Home, End, Enter, Escape), a check mark on the selected option, an animated panel and a `bare` variant for the hero search and the Lists filter bar.
 - `Modal` renders in a portal with enter and exit animation, focus trap, Escape to close, scroll lock and focus return.
+- Property details modals show bedrooms, bathrooms, floors, building area, land area, Kitchen, Carport and Taman Belakang (rear garden) in a responsive specification grid. The three amenity specifications show a checkmark when available and a dash otherwise, with accessible status text. Availability comes from explicit listing fields; unknown availability stays unspecified rather than being inferred from missing copy.
 - `StatusAlert` shows a toast after a form submission (on Contact: "Opening your email app").
 - Forms use react-hook-form with `zodResolver`; the controller owns the form, the component renders `Controller` fields.
 
@@ -144,6 +145,7 @@ Form controls follow the webluma component set:
 - Hosting: Firebase Hosting, project `theviewresidence` (`.firebaserc`). `firebase.json` builds before every deploy, serves `out/` with clean URLs and caches `/_next/static/**` for a year. Deploy with `npm run deploy`. `NEXT_PUBLIC_SITE_URL` in `.env.production` is the canonical URL.
 - Images: `next/image` uses `src/lib/image-loader.ts`, which asks Unsplash for each size through URL parameters, since a static site has no image optimizer.
 - Listings: `PropertyRecord` mirrors the planned Firestore `properties` document. Queries return `PropertyRow` with a display `price` (`Rp 1.250.000.000`) and a raw `priceValue`. They run at build time, so a listing change needs a rebuild and redeploy.
+- Amenity availability: `hasKitchen`, `hasCarport` and `hasBackGarden` are `boolean | null` fields on each listing. `true` means available, `false` means unavailable and `null` means unspecified. Seed values use explicit details in the placeholder listing copy; a front garden or customer parking does not confirm a rear garden or carport.
 - Enquiries: validated with zod in the browser, then handed to the visitor's email app as a `mailto:` link to `contactEmail` with the subject and details filled in. Nothing is stored and the site can't confirm delivery.
 - Roadmap to dynamic: move to Firebase App Hosting (Next.js server rendering) and remove `output: "export"`; add `firebase-admin` and `src/server/db/firestore.ts`; replace `readPropertyRecords()` in `queries.ts` with a Firestore read; seed Firestore from `seed-data.ts` with a script; add `createEnquiry()` writing to an `enquiries` collection behind a Route Handler or Server Action; move photos to Firebase Storage and teach the image loader its host; then turn Cache Components back on and revalidate a `properties` tag after listing changes.
 
